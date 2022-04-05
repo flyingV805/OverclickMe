@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.flyingv.overclickme.databinding.ActivityMainBinding
+import kz.flyingv.overclickme.model.Player
 
 class GameActivity : AppCompatActivity() {
 
@@ -36,7 +37,7 @@ class GameActivity : AppCompatActivity() {
         startBattle()
     }
 
-    private fun showWinDialog(){
+    private fun showWinView(player: Player){
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_win_dialog)
@@ -52,9 +53,9 @@ class GameActivity : AppCompatActivity() {
 
     private fun finishBattle(){
         if(battleState <= 0.1){
-            showWinDialog()
+            showWinView(Player.TWO)
         }else if(battleState >= 0.9){
-            showWinDialog()
+            showWinView(Player.ONE)
         }
     }
 
