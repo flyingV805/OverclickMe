@@ -1,13 +1,17 @@
 package kz.flyingv.overclickme
 
+import android.animation.Animator
 import android.animation.LayoutTransition
 import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.Window
+import android.view.animation.Animation
 import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.animation.keyframe.BaseKeyframeAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.flyingv.overclickme.databinding.ActivityMainBinding
@@ -34,7 +38,23 @@ class GameActivity : AppCompatActivity() {
 
         binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-        startBattle()
+        binding.animationView.speed = 1.6f
+        binding.animationView.setMaxProgress(0.78f)
+
+        startCountDown()
+    }
+
+    private fun startCountDown(){
+        binding.animationView.playAnimation()
+        binding.animationView.addAnimatorListener(object: Animator.AnimatorListener{
+            override fun onAnimationStart(p0: Animator?) {}
+            override fun onAnimationCancel(p0: Animator?) {}
+            override fun onAnimationRepeat(p0: Animator?) {}
+            override fun onAnimationEnd(p0: Animator?) {
+                binding.animationView.visibility = View.GONE
+                startBattle()
+            }
+        })
     }
 
     private fun showWinView(player: Player){
