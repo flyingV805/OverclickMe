@@ -36,6 +36,10 @@ class GameActivity : AppCompatActivity() {
             battleState -= 0.02f
         }
 
+        binding.settings.setOnClickListener {
+            showSettings()
+        }
+
         initUI()
         startCountDown()
     }
@@ -105,6 +109,16 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showSettings(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_settings)
+
+        dialog.show()
+
     }
 
 }
