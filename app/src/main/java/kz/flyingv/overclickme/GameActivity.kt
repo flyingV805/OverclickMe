@@ -36,22 +36,28 @@ class GameActivity : AppCompatActivity() {
             battleState -= 0.02f
         }
 
-        binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-
-        binding.animationView.speed = 1.6f
-        binding.animationView.setMaxProgress(0.78f)
-
+        initUI()
         startCountDown()
     }
 
+    private fun initUI(){
+        binding.player0.isClickable = false
+        binding.player1.isClickable = false
+        binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
+        binding.animationView.speed = 1.6f
+        binding.animationView.setMaxProgress(0.78f)
+    }
+
     private fun startCountDown(){
+        binding.countdown.visibility = View.VISIBLE
         binding.animationView.playAnimation()
         binding.animationView.addAnimatorListener(object: Animator.AnimatorListener{
             override fun onAnimationStart(p0: Animator?) {}
             override fun onAnimationCancel(p0: Animator?) {}
             override fun onAnimationRepeat(p0: Animator?) {}
             override fun onAnimationEnd(p0: Animator?) {
-                binding.animationView.visibility = View.GONE
+                binding.countdown.visibility = View.GONE
+                //binding.animationView.visibility = View.GONE
                 startBattle()
             }
         })
@@ -86,6 +92,8 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun startBattle(){
+        binding.player0.isClickable = true
+        binding.player1.isClickable = true
         var isPlaying = true
         lifecycleScope.launch {
             while (isPlaying){
