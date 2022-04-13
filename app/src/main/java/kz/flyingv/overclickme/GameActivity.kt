@@ -7,11 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import android.view.animation.Animation
-import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.Guideline
 import androidx.lifecycle.lifecycleScope
-import com.airbnb.lottie.animation.keyframe.BaseKeyframeAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.flyingv.overclickme.databinding.ActivityMainBinding
@@ -36,9 +32,11 @@ class GameActivity : AppCompatActivity() {
             battleState -= 0.02f
         }
 
-        binding.settings.setOnClickListener {
-            showSettings()
-        }
+        binding.player0Settings.setOnClickListener {showSettings()}
+        binding.player0Restart.setOnClickListener {restartBattle()}
+
+        binding.player1Settings.setOnClickListener {showSettings()}
+        binding.player1Restart.setOnClickListener {restartBattle()}
 
         initUI()
         startCountDown()
@@ -50,35 +48,30 @@ class GameActivity : AppCompatActivity() {
         binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.animationView.speed = 1.6f
         binding.animationView.setMaxProgress(0.78f)
+
+        binding.animationView.addAnimatorListener(StartAnimationListener())
+        binding.player0Win.addAnimatorListener(Player0AnimationListener())
+        binding.player1Win.addAnimatorListener(Player1AnimationListener())
     }
 
     private fun startCountDown(){
         binding.countdown.visibility = View.VISIBLE
         binding.animationView.playAnimation()
-        binding.animationView.addAnimatorListener(object: Animator.AnimatorListener{
-            override fun onAnimationStart(p0: Animator?) {}
-            override fun onAnimationCancel(p0: Animator?) {}
-            override fun onAnimationRepeat(p0: Animator?) {}
-            override fun onAnimationEnd(p0: Animator?) {
-                binding.countdown.visibility = View.GONE
-                //binding.animationView.visibility = View.GONE
-                startBattle()
-            }
-        })
     }
 
     private fun showWinView(player: Player){
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.dialog_win_dialog)
-        dialog.setCancelable(false)
-
-        dialog.findViewById<AppCompatButton>(R.id.again).setOnClickListener {
-            dialog.dismiss()
-            restartBattle()
+        when(player){
+            Player.ONE -> {
+                binding.player0Win.visibility = View.VISIBLE
+                binding.player0Win.playAnimation()
+                binding.player0Options.visibility = View.VISIBLE
+            }
+            Player.TWO -> {
+                binding.player1Win.visibility = View.VISIBLE
+                binding.player1Win.playAnimation()
+                binding.player1Options.visibility = View.VISIBLE
+            }
         }
-
-        dialog.show()
     }
 
     private fun finishBattle(){
@@ -92,7 +85,21 @@ class GameActivity : AppCompatActivity() {
     private fun restartBattle(){
         battleState = 0.5f
         binding.battleLine.setGuidelinePercent(battleState)
-        startBattle()
+
+
+        binding.player0Win.visibility = View.GONE
+        binding.player0Win.cancelAnimation()
+        binding.player0Options.visibility = View.GONE
+        binding.player0Settings.hide()
+        binding.player0Restart.hide()
+
+        binding.player1Win.visibility = View.GONE
+        binding.player1Win.cancelAnimation()
+        binding.player1Options.visibility = View.GONE
+        binding.player1Settings.hide()
+        binding.player1Restart.hide()
+
+        startCountDown()
     }
 
     private fun startBattle(){
@@ -118,6 +125,45 @@ class GameActivity : AppCompatActivity() {
         dialog.setContentView(R.layout.dialog_settings)
 
         dialog.show()
+
+    }
+
+    inner class StartAnimationListener: Animator.AnimatorListener{
+
+        override fun onAnimationStart(p0: Animator?) {}
+        override fun onAnimationCancel(p0: Animator?) {}
+        override fun onAnimationRepeat(p0: Animator?) {}
+
+        override fun onAnimationEnd(p0: Animator?) {
+            binding.countdown.visibility = View.GONE
+            startBattle()
+        }
+
+    }
+
+    inner class Player0AnimationListener: Animator.AnimatorListener{
+
+        override fun onAnimationStart(p0: Animator?) {}
+        override fun onAnimationCancel(p0: Animator?) {}
+        override fun onAnimationRepeat(p0: Animator?) {}
+
+        override fun onAnimationEnd(p0: Animator?) {
+            binding.player0Settings.show()
+            binding.player0Restart.show()
+        }
+
+    }
+
+    inner class Player1AnimationListener: Animator.AnimatorListener{
+
+        override fun onAnimationStart(p0: Animator?) {}
+        override fun onAnimationCancel(p0: Animator?) {}
+        override fun onAnimationRepeat(p0: Animator?) {}
+
+        override fun onAnimationEnd(p0: Animator?) {
+            binding.player1Settings.show()
+            binding.player1Restart.show()
+        }
 
     }
 

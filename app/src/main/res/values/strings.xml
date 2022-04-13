@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">OverclickMe</string>
+    <string name="app_name">OverclickMe!</string>
+    <string name="restart">PLAY AGAIN</string>
 </resources>
