@@ -7,31 +7,32 @@
     android:padding="@dimen/main_margin">
 
     <RadioGroup
+        android:id="@+id/colorPalette"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_horizontal">
 
         <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/colorPalette0"
+            android:id="@+id/colorPaletteDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/selector_radio_color"
+            android:button="@drawable/selector_radio_color_default"
             android:checked="true"/>
 
         <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/colorPalette1"
+            android:id="@+id/colorPaletteAlt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/selector_radio_color"
+            android:button="@drawable/selector_radio_color_alt"
             android:layout_marginStart="@dimen/main_margin"
             android:layout_marginEnd="@dimen/main_margin"/>
 
         <androidx.appcompat.widget.AppCompatRadioButton
-            android:id="@+id/colorPalette2"
+            android:id="@+id/colorPaletteContrast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:button="@drawable/selector_radio_color"/>
+            android:button="@drawable/selector_radio_color_contrast"/>
 
     </RadioGroup>
 

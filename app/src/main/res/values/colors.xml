@@ -7,4 +7,16 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="paletteBackground">#dfdafa</color>
+
+    <color name="paletteDefaultPlayer0">#822fc9</color>
+    <color name="paletteDefaultPlayer1">#2e9fcb</color>
+
+    <color name="paletteAltPlayer0">#512eca</color>
+    <color name="paletteAltPlayer1">#c92e72</color>
+
+    <color name="paletteContrastPlayer0">#cc35a8</color>
+    <color name="paletteContrastPlayer1">#34cb7e</color>
+
 </resources>

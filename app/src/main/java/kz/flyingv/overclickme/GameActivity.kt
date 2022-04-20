@@ -3,11 +3,17 @@ package kz.flyingv.overclickme
 import android.animation.Animator
 import android.animation.LayoutTransition
 import android.app.Dialog
+import android.content.SharedPreferences
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.TransitionDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.RadioGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.flyingv.overclickme.databinding.ActivityMainBinding
@@ -16,12 +22,17 @@ import kz.flyingv.overclickme.model.Player
 class GameActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var preferences: SharedPreferences
 
     private var battleState = 0.5f
+
+    private var player0Color: Int = R.color.paletteDefaultPlayer0
+    private var player1Color: Int = R.color.paletteDefaultPlayer1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
         setContentView(binding.root)
 
         binding.player0.setOnClickListener {
@@ -48,6 +59,12 @@ class GameActivity : AppCompatActivity() {
         binding.rootLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         binding.animationView.speed = 1.6f
         binding.animationView.setMaxProgress(0.78f)
+
+        player0Color = preferences.getInt("player0Color", R.color.paletteDefaultPlayer0)
+        player1Color = preferences.getInt("player1Color", R.color.paletteDefaultPlayer1)
+
+        binding.player0.setBackgroundColor( ContextCompat.getColor(this, player0Color) )
+        binding.player1.setBackgroundColor( ContextCompat.getColor(this, player1Color) )
 
         binding.animationView.addAnimatorListener(StartAnimationListener())
         binding.player0Win.addAnimatorListener(Player0AnimationListener())
@@ -86,7 +103,6 @@ class GameActivity : AppCompatActivity() {
         battleState = 0.5f
         binding.battleLine.setGuidelinePercent(battleState)
 
-
         binding.player0Win.visibility = View.GONE
         binding.player0Win.cancelAnimation()
         binding.player0Options.visibility = View.GONE
@@ -124,7 +140,61 @@ class GameActivity : AppCompatActivity() {
         dialog.setCancelable(true)
         dialog.setContentView(R.layout.dialog_settings)
 
+        val colorSelector = dialog.findViewById<RadioGroup>(R.id.colorPalette)
+
+        var newPlayer0Color = R.color.paletteDefaultPlayer0
+        var newPlayer1Color = R.color.paletteDefaultPlayer0
+
+        colorSelector.setOnCheckedChangeListener { _, paletteId ->
+            when(paletteId){
+                R.id.colorPaletteDefault -> {
+                    newPlayer0Color = R.color.paletteDefaultPlayer0
+                    newPlayer1Color = R.color.paletteDefaultPlayer1
+                }
+                R.id.colorPaletteAlt -> {
+                    newPlayer0Color = R.color.paletteAltPlayer0
+                    newPlayer1Color = R.color.paletteAltPlayer1
+
+                }
+                R.id.colorPaletteContrast -> {
+                    newPlayer0Color = R.color.paletteContrastPlayer0
+                    newPlayer1Color = R.color.paletteContrastPlayer1
+
+                }
+            }
+            updateUIColorPalette(newPlayer0Color, newPlayer1Color)
+        }
+
+        dialog.setOnDismissListener {
+            preferences.edit().putInt("player0Color", player0Color).putInt("player1Color", player1Color).apply()
+        }
+
         dialog.show()
+
+    }
+
+    private fun updateUIColorPalette(newPlayer0Color: Int, newPlayer1Color: Int){
+        val player0Colors = arrayOf(
+            ColorDrawable(ContextCompat.getColor(this, player0Color)),
+            ColorDrawable(ContextCompat.getColor(this, newPlayer0Color))
+        )
+        val player1Colors = arrayOf(
+            ColorDrawable(ContextCompat.getColor(this, player1Color)),
+            ColorDrawable(ContextCompat.getColor(this, newPlayer1Color))
+        )
+
+        val player0Transition = TransitionDrawable(player0Colors)
+        binding.player0.background = player0Transition
+
+        val player1Transition = TransitionDrawable(player1Colors)
+        binding.player1.background = player1Transition
+
+
+        player0Transition.startTransition(200)
+        player1Transition.startTransition(200)
+
+        player0Color = newPlayer0Color
+        player1Color = newPlayer1Color
 
     }
 
