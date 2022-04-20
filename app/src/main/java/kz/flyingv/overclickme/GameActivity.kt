@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.LayoutTransition
 import android.app.Dialog
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.TransitionDrawable
 import androidx.appcompat.app.AppCompatActivity
@@ -43,11 +44,11 @@ class GameActivity : AppCompatActivity() {
             battleState -= 0.02f
         }
 
-        binding.player0Settings.setOnClickListener {showSettings()}
-        binding.player0Restart.setOnClickListener {restartBattle()}
+        //binding.player0Settings.setOnClickListener {showSettings()}
+        binding.player0Restart.setOnClickListener {restartBattle(Player.ONE)}
 
-        binding.player1Settings.setOnClickListener {showSettings()}
-        binding.player1Restart.setOnClickListener {restartBattle()}
+        //binding.player1Settings.setOnClickListener {showSettings()}
+        binding.player1Restart.setOnClickListener {restartBattle(Player.TWO)}
 
         initUI()
         startCountDown()
@@ -66,9 +67,16 @@ class GameActivity : AppCompatActivity() {
         binding.player0.setBackgroundColor( ContextCompat.getColor(this, player0Color) )
         binding.player1.setBackgroundColor( ContextCompat.getColor(this, player1Color) )
 
+        binding.player0Restart.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, player1Color))
+        //binding.player0Settings.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, player1Color))
+
+        binding.player1Restart.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, player0Color))
+        //binding.player1Settings.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, player1Color))
+
         binding.animationView.addAnimatorListener(StartAnimationListener())
         binding.player0Win.addAnimatorListener(Player0AnimationListener())
         binding.player1Win.addAnimatorListener(Player1AnimationListener())
+
     }
 
     private fun startCountDown(){
@@ -82,16 +90,32 @@ class GameActivity : AppCompatActivity() {
                 binding.player0Win.visibility = View.VISIBLE
                 binding.player0Win.playAnimation()
                 binding.player0Options.visibility = View.VISIBLE
+                val player0Background = arrayOf(
+                    ColorDrawable(ContextCompat.getColor(this, player0Color)),
+                    ColorDrawable(ContextCompat.getColor(this, R.color.paletteBackground))
+                )
+                val player0BackgroundTransition = TransitionDrawable(player0Background)
+                binding.player0.background = player0BackgroundTransition
+                player0BackgroundTransition.startTransition(200)
             }
             Player.TWO -> {
                 binding.player1Win.visibility = View.VISIBLE
                 binding.player1Win.playAnimation()
                 binding.player1Options.visibility = View.VISIBLE
+                val player1Background = arrayOf(
+                    ColorDrawable(ContextCompat.getColor(this, player1Color)),
+                    ColorDrawable(ContextCompat.getColor(this, R.color.paletteBackground))
+                )
+                val player1BackgroundTransition = TransitionDrawable(player1Background)
+                binding.player1.background = player1BackgroundTransition
+                player1BackgroundTransition.startTransition(200)
             }
         }
     }
 
     private fun finishBattle(){
+        binding.player0.isClickable = false
+        binding.player1.isClickable = false
         if(battleState <= 0.1){
             showWinView(Player.TWO)
         }else if(battleState >= 0.9){
@@ -99,21 +123,42 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun restartBattle(){
+    private fun restartBattle(player: Player){
         battleState = 0.5f
         binding.battleLine.setGuidelinePercent(battleState)
 
         binding.player0Win.visibility = View.GONE
         binding.player0Win.cancelAnimation()
         binding.player0Options.visibility = View.GONE
-        binding.player0Settings.hide()
+        //binding.player0Settings.hide()
         binding.player0Restart.hide()
 
         binding.player1Win.visibility = View.GONE
         binding.player1Win.cancelAnimation()
         binding.player1Options.visibility = View.GONE
-        binding.player1Settings.hide()
+        //binding.player1Settings.hide()
         binding.player1Restart.hide()
+
+        when(player){
+            Player.ONE -> {
+                val player0Background = arrayOf(
+                    ColorDrawable(ContextCompat.getColor(this, R.color.paletteBackground)),
+                    ColorDrawable(ContextCompat.getColor(this, player0Color))
+                )
+                val player0BackgroundTransition = TransitionDrawable(player0Background)
+                binding.player0.background = player0BackgroundTransition
+                player0BackgroundTransition.startTransition(200)
+            }
+            Player.TWO -> {
+                val player1Background = arrayOf(
+                    ColorDrawable(ContextCompat.getColor(this, R.color.paletteBackground)),
+                    ColorDrawable(ContextCompat.getColor(this, player1Color))
+                )
+                val player1BackgroundTransition = TransitionDrawable(player1Background)
+                binding.player1.background = player1BackgroundTransition
+                player1BackgroundTransition.startTransition(200)
+            }
+        }
 
         startCountDown()
     }
@@ -218,7 +263,7 @@ class GameActivity : AppCompatActivity() {
         override fun onAnimationRepeat(p0: Animator?) {}
 
         override fun onAnimationEnd(p0: Animator?) {
-            binding.player0Settings.show()
+            //binding.player0Settings.show()
             binding.player0Restart.show()
         }
 
@@ -231,7 +276,7 @@ class GameActivity : AppCompatActivity() {
         override fun onAnimationRepeat(p0: Animator?) {}
 
         override fun onAnimationEnd(p0: Animator?) {
-            binding.player1Settings.show()
+            //binding.player1Settings.show()
             binding.player1Restart.show()
         }
 
