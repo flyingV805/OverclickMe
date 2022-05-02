@@ -6,6 +6,7 @@ Simple clicker game for two players
 
 ## Tech-stack
 Min API level is set to 21, so the presented approach is suitable for over 94% of devices running Android. 
+
     -   [Jetpack](https://developer.android.com/jetpack)
     
     -   [Android KTX](https://developer.android.com/kotlin/ktx.html)
